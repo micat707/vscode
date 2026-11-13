@@ -35,6 +35,10 @@ import { ChatViewPane } from './widgetHosts/viewPane/chatViewPane.js';
 
 // --- Chat Container &  View Registration
 
+// 本 fork 为了使用自定义 chat 面板而禁用原生 chat 视图注册。设为 true 时跳过下方 registerViews 调用，
+// 容器仍注册但变为空容器（hideIfEmpty 使其永不渲染）。改回 false 即可恢复原生 chat 视图。
+const DISABLE_NATIVE_CHAT = true;
+
 const chatViewIcon = registerIcon('chat-view-icon', Codicon.chatSparkle, localize('chatViewIcon', 'View icon of the chat view.'));
 
 const chatViewContainer: ViewContainer = Registry.as<IViewContainersRegistry>(ViewExtensions.ViewContainersRegistry).registerViewContainer({
@@ -80,7 +84,9 @@ const chatViewDescriptor: IViewDescriptor = {
 		)
 	)
 };
-Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews([chatViewDescriptor], chatViewContainer);
+if (!DISABLE_NATIVE_CHAT) {
+	Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry).registerViews([chatViewDescriptor], chatViewContainer);
+}
 
 const chatParticipantExtensionPoint = extensionsRegistry.ExtensionsRegistry.registerExtensionPoint<IRawChatParticipantContribution[]>({
 	extensionPoint: 'chatParticipants',

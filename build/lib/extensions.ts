@@ -263,7 +263,9 @@ export function fromVsix(vsixPath: string, { name: extensionName, version, sha25
 			const hash = crypto.createHash('sha256');
 			hash.update(f.contents as Buffer);
 			const checksum = hash.digest('hex');
-			if (checksum !== sha256) {
+			// 本 fork:sha256 为空时跳过校验,方便内置本地 vsix(如 Continue)在每次重打后
+			// 无需更新 product.json 里的 sha256。填了 sha256 则仍按原逻辑强校验。
+			if (sha256 && checksum !== sha256) {
 				throw new Error(`Checksum mismatch for ${vsixPath} (expected ${sha256}, actual ${checksum}))`);
 			}
 			return f;

@@ -50,6 +50,22 @@ export function ViewContainerLocationToString(viewContainerLocation: ViewContain
 	}
 }
 
+/**
+ * 本 fork:自建 chat 面板(基于 Continue 扩展改造)所用的 view container 运行时完整 id。
+ * 扩展通过 `contributes.viewsContainers.secondarySidebar` 贡献短 id `continue`,
+ * 运行时由 `workbench.view.extension.<id>` 规则生成此完整 id。
+ */
+export const CHAT_LOCKED_VIEW_CONTAINER_ID = 'workbench.view.extension.continue';
+
+/**
+ * 本 fork:判断某个 view container 是否被锁死在右侧辅助栏(AuxiliaryBar)、禁止移动。
+ * 被锁定的容器:注册后固定在右侧,拖拽与右键“Move To / Reset Location”菜单都不得移动它。
+ * 在位置解析、拖放判定、右键菜单三处统一引用此 helper,避免 id 字符串散落。
+ */
+export function isLockedToAuxiliaryBar(viewContainerId: string | undefined): boolean {
+	return viewContainerId === CHAT_LOCKED_VIEW_CONTAINER_ID;
+}
+
 type OpenCommandActionDescriptor = {
 	readonly id: string;
 	readonly title?: ILocalizedString | string;

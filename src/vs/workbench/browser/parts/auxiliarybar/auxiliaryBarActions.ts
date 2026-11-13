@@ -73,16 +73,21 @@ export class ToggleAuxiliaryBarAction extends Action2 {
 
 registerAction2(ToggleAuxiliaryBarAction);
 
-MenuRegistry.appendMenuItem(MenuId.AuxiliaryBarTitle, {
-	command: {
-		id: ToggleAuxiliaryBarAction.ID,
-		title: localize('closeSecondarySideBar', 'Hide Secondary Side Bar'),
-		icon: closeIcon
-	},
-	group: 'navigation',
-	order: 2,
-	when: ContextKeyExpr.equals(`config.${LayoutSettings.ACTIVITY_BAR_LOCATION}`, ActivityBarPosition.DEFAULT)
-});
+// 本 fork:Continue 面板锁死常驻右侧辅助栏,移除标题栏右上角的 X(隐藏辅助栏)按钮,
+// 避免用户误点关闭面板。设为 false 可恢复原生的关闭按钮。
+const SHOW_AUXILIARYBAR_CLOSE_BUTTON = false;
+if (SHOW_AUXILIARYBAR_CLOSE_BUTTON) {
+	MenuRegistry.appendMenuItem(MenuId.AuxiliaryBarTitle, {
+		command: {
+			id: ToggleAuxiliaryBarAction.ID,
+			title: localize('closeSecondarySideBar', 'Hide Secondary Side Bar'),
+			icon: closeIcon
+		},
+		group: 'navigation',
+		order: 2,
+		when: ContextKeyExpr.equals(`config.${LayoutSettings.ACTIVITY_BAR_LOCATION}`, ActivityBarPosition.DEFAULT)
+	});
+}
 
 registerAction2(class extends Action2 {
 	constructor() {

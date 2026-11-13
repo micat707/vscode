@@ -18,7 +18,7 @@ import { IStorageService, StorageScope, StorageTarget } from '../../../platform/
 import { IExtensionService } from '../../services/extensions/common/extensions.js';
 import { URI, UriComponents } from '../../../base/common/uri.js';
 import { ToggleCompositePinnedAction, ICompositeBarColors, IActivityHoverOptions, ToggleCompositeBadgeAction, CompositeBarAction, ICompositeBar, ICompositeBarActionItem } from './compositeBarActions.js';
-import { IViewDescriptorService, ViewContainer, IViewContainerModel, ViewContainerLocation } from '../../common/views.js';
+import { IViewDescriptorService, ViewContainer, IViewContainerModel, ViewContainerLocation, isLockedToAuxiliaryBar } from '../../common/views.js';
 import { IContextKeyService, ContextKeyExpr } from '../../../platform/contextkey/common/contextkey.js';
 import { isString } from '../../../base/common/types.js';
 import { IWorkbenchEnvironmentService } from '../../services/environment/common/environmentService.js';
@@ -156,6 +156,11 @@ export class PaneCompositeBar extends Disposable {
 
 	private getContextMenuActionsForComposite(compositeId: string): IAction[] {
 		const actions: IAction[] = [new Separator()];
+
+		// 本 fork:被锁定的 chat 容器固定在右侧,不提供“Move To / Reset Location”菜单项。
+		if (isLockedToAuxiliaryBar(compositeId)) {
+			return actions;
+		}
 
 		const viewContainer = this.viewDescriptorService.getViewContainerById(compositeId)!;
 		const defaultLocation = this.viewDescriptorService.getDefaultViewContainerLocation(viewContainer)!;

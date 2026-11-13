@@ -16,7 +16,7 @@ import { Widget } from '../../../base/browser/ui/widget.js';
 import { isUndefinedOrNull } from '../../../base/common/types.js';
 import { IColorTheme } from '../../../platform/theme/common/themeService.js';
 import { Emitter } from '../../../base/common/event.js';
-import { ViewContainerLocation, IViewDescriptorService } from '../../common/views.js';
+import { ViewContainerLocation, IViewDescriptorService, isLockedToAuxiliaryBar } from '../../common/views.js';
 import { IPaneComposite } from '../../common/panecomposite.js';
 import { IComposite } from '../../common/composite.js';
 import { CompositeDragAndDropData, CompositeDragAndDropObserver, IDraggedCompositeData, ICompositeDragAndDrop, Before2D, toggleDropEffect, ICompositeDragAndDropObserverCallbacks } from '../dnd.js';
@@ -110,6 +110,11 @@ export class CompositeDragAndDrop implements ICompositeDragAndDrop {
 		const dragData = data.getData();
 
 		if (dragData.type === 'composite') {
+
+			// 本 fork:被锁定的 chat 容器不可被拖走(固定在右侧辅助栏)。
+			if (isLockedToAuxiliaryBar(dragData.id)) {
+				return false;
+			}
 
 			// Dragging a composite
 			const currentContainer = this.viewDescriptorService.getViewContainerById(dragData.id)!;
